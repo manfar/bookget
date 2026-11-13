@@ -9,3 +9,5 @@
 *.7z
 *.bak
 *.zip
+# macOS Finder metadata
+.DS_Store

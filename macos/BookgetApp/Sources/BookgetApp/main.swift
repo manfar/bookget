@@ -24,7 +24,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Bookget")
                         .font(.largeTitle.weight(.semibold))
-                    Text("数字古籍下载工具 · Intel Mac")
+                    Text("数字古籍下载工具 · Intel + Apple Silicon")
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
