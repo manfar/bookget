@@ -36,3 +36,8 @@ windows-amd64:
 .PHONY: clean
 clean:
 	@rm -rf $(DIST_DIR)
+
+# Intel Mac 原生 GUI（macOS 14+）
+.PHONY: macos-app
+macos-app:
+	@bash scripts/build-macos-app.sh
