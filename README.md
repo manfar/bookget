@@ -20,19 +20,19 @@ make windows-amd64  # 编译Windows版本
 make release        # 编译所有平台
 ```
 
-### macOS Intel 原生 GUI（macOS 14+）
+### macOS 原生 Universal GUI（Intel + Apple Silicon，macOS 14+）
 
-在 Intel Mac 上安装 Go、Swift（Xcode Command Line Tools）和 Make 后，在项目根目录执行：
+在 Mac 上安装 Go、Swift（Xcode Command Line Tools）和 Make 后，在项目根目录执行：
 
 ```shell
 make macos-app
 ```
 
-构建产物：`dist/darwin-amd64/Bookget.app`。如果需要重新构建并替换这个由脚本生成的 App，先确认目标路径后执行 `FORCE=1 make macos-app`。
+构建产物：`dist/darwin-universal/Bookget.app`。脚本分别构建 x86_64 与 arm64 的 Go 下载核心和 SwiftUI GUI，再合并为 Universal Binary。若目标 App 已存在，确认后使用 `FORCE=1 make macos-app` 替换。
 
-此 GUI 使用 SwiftUI，并调用随 App 打包的 `darwin/amd64` Go 下载核心；原有 Windows `bookget-gui/` 工程保持不变。第一版支持单个 HTTP/HTTPS URL、保存目录、Cookies、Headers、页码范围、册数范围和线程数。当前 CLI 没有结构化下载进度接口，因此界面显示运行状态与日志，不显示虚构的百分比。终止按钮会结束子进程，不能保证优雅取消，可能留下部分文件。批量 URL 文件和交互式图片模板模式暂时仍使用 CLI。
+此 GUI 调用随 App 打包的 Go 下载核心；原有 Windows `bookget-gui/` 工程保持不变。第一版支持单个 HTTP/HTTPS URL、保存目录、Cookies、Headers、页码范围、册数范围和线程数。当前 CLI 没有结构化下载进度接口，因此界面显示运行状态与日志，不显示虚构的百分比。终止子进程不保证优雅取消，可能留下部分文件。
 
-构建为本机 ad-hoc 签名，不包含 Apple Developer ID 公证。
+当前临时应用图标取自仓库已有 favicon，后续可替换 `macos/Resources/bookget-icon.png`。构建为本地 ad-hoc 签名，不包含 Apple Developer ID 公证。
 
 - For Win可用环境：windows 10 x64 / windows 11 （自2024/01/12日起，引入bookget-gui只适用于Win10/11 x64系统）。
 

@@ -1,37 +1,46 @@
-# Bookget macOS Intel GUI
+# Bookget macOS Universal GUI
 
-This SwiftUI app is a macOS 14+ front end for the existing Bookget Go CLI. It does not reimplement the downloaders or alter the Windows C++/WebView2 GUI.
+SwiftUI 原生 macOS 应用，最低支持 macOS 14。下载功能复用仓库现有 Go CLI，不修改 Windows GUI。
 
-## Build on an Intel Mac
+## 支持架构
 
-From the repository root:
+- Intel Mac：x86_64
+- Apple Silicon：arm64
+- Go 下载核心与 SwiftUI GUI 均打包为 Universal Binary。
+
+## 构建
+
+在 macOS 上安装 Go、Swift（Xcode Command Line Tools）和 Make 后，在仓库根目录运行：
 
 ```bash
 make macos-app
 ```
 
-Output:
+输出：`dist/darwin-universal/Bookget.app`
 
-```text
-dist/darwin-amd64/Bookget.app
-```
-
-To replace an existing generated bundle after reviewing the path:
+如果目标 App 已存在，脚本默认拒绝覆盖。确认后执行：
 
 ```bash
 FORCE=1 make macos-app
 ```
 
-The build creates an x86_64 Go CLI in `Contents/Resources/bin/bookget`, a SwiftUI executable in `Contents/MacOS/Bookget`, and an ad-hoc code signature. It is a local development build and is not Apple-notarized.
+脚本会分别构建 x86_64 与 arm64 的 Go 下载核心和 SwiftUI GUI，再合并成 Universal Binary。只有新应用完整构建并通过架构检查后，才会替换旧的构建产物。
 
-## GUI scope and known limits
+## 第一版功能
 
-- Supports one direct HTTP/HTTPS URL per task.
-- Passes destination directory, optional Cookies and Headers files, page range, volume range, and per-task thread count to the existing CLI.
-- Uses the existing Go downloader and site routers. It does not reproduce those functions in Swift.
-- Displays combined stdout/stderr output and an indeterminate running indicator.
-- The current CLI does not expose a stable structured progress protocol, so the GUI intentionally does not display a fabricated percentage or byte count.
-- Terminating a process sends the operating-system terminate signal. It is not a confirmed graceful cancellation; a downloader implementation may leave partial output files.
-- Batch URL-file mode and the interactive image-template mode are not exposed in this first GUI.
+- 单个 HTTP/HTTPS URL 下载
+- 保存目录选择
+- 可选 Cookies、Headers 文件
+- 页码范围、册数范围、每任务线程数
+- stdout/stderr 运行日志
+- 终止下载进程、打开保存目录
 
-Cookies and Headers paths are passed to the CLI; the GUI does not copy their contents. Cookies must use a format accepted by the existing Bookget code. Headers use one `Name: Value` entry per line.
+CLI 当前没有稳定的结构化进度协议，因此 GUI 显示运行状态与日志，不显示虚构的百分比。终止进程不保证优雅取消，可能留下部分文件。
+
+## 应用图标
+
+当前临时图标来自仓库已有资源：`bookget-gui/gui/controls_ui/img/favicon.png`。构建脚本将其转换为 `AppIcon.icns`。后续替换 `macos/Resources/bookget-icon.png` 即可，不需要改 SwiftUI 代码。
+
+## 签名
+
+构建脚本使用 ad-hoc 签名，仅用于本地测试。正式对外分发还需 Developer ID 签名和 Apple 公证。
